@@ -1,0 +1,71 @@
+.ui-tooltip {
+    --tooltip-background: Canvas;
+    --tooltip-border-color: currentColor;
+    --tooltip-color: CanvasText;
+    --tooltip-arrow-size: 10px;
+    --_tooltip-border: color-mix(in srgb, var(--tooltip-border-color) 12%, transparent);
+    --_tooltip-offset: -4px;
+    --_tooltip-origin: top center;
+    --_tooltip-scale: .985;
+    position: fixed;
+    left: 0;
+    top: 0;
+    box-sizing: border-box;
+    width: max-content;
+    max-width: min(34ch, calc(100vw - 24px));
+    padding: .58em .84em;
+    border: 1px solid var(--_tooltip-border);
+    border-radius: .9em;
+    background: var(--tooltip-background);
+    color: var(--tooltip-color);
+    box-shadow: 0 14px 30px rgba(0, 0, 0, .1);
+    font-size: .8rem;
+    line-height: 1.2;
+    text-align: center;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(var(--_tooltip-offset)) scale(var(--_tooltip-scale));
+    transform-origin: var(--_tooltip-origin);
+    transition: opacity .15s ease, transform .15s ease;
+    z-index: 80;
+}
+
+.ui-tooltip::before {
+    content: "";
+    position: absolute;
+    left: var(--_tooltip-arrow-left, 50%);
+    top: 0;
+    width: var(--tooltip-arrow-size);
+    height: var(--tooltip-arrow-size);
+    border-left: 1px solid var(--_tooltip-border);
+    border-top: 1px solid var(--_tooltip-border);
+    background: var(--tooltip-background);
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.ui-tooltip[data-side="top"] {
+    --_tooltip-offset: 4px;
+    --_tooltip-origin: bottom center;
+}
+
+.ui-tooltip[data-side="top"]::before {
+    top: auto;
+    bottom: 0;
+    border-left: 0;
+    border-top: 0;
+    border-right: 1px solid var(--_tooltip-border);
+    border-bottom: 1px solid var(--_tooltip-border);
+    transform: translate(-50%, 50%) rotate(45deg);
+}
+
+.ui-tooltip[data-visible="true"] {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+.ui-tooltip[hidden] {
+    display: block;
+    visibility: hidden;
+}

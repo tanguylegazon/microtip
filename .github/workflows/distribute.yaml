@@ -1,0 +1,44 @@
+name: Deploy for distribution
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'tooltip.css'
+      - 'tooltip.js'
+      - '.github/workflows/distribute.yaml'
+      - '.github/workflows/purge-cache.yaml'
+
+permissions:
+  contents: write
+
+jobs:
+  distribute:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 'latest'
+
+      - name: Build distribution files
+        run: |
+          npx csso-cli -i "tooltip.css" -o "tooltip.min.css" --comments first-exclamation
+          npx terser "tooltip.js" -o "tooltip.min.js" -c -m
+
+      - name: Push to distribution branch
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout --orphan dist
+          git reset
+          git add -f tooltip.min.css tooltip.min.js
+          git commit -m "[bot] Build distribution files"
+          git push --force origin dist

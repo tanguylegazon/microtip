@@ -1,0 +1,21 @@
+name: Purge CDN cache
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["Deploy for distribution"]
+    types:
+      - completed
+
+jobs:
+  purge_cache:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    timeout-minutes: 3
+
+    steps:
+      - name: Purge JSDelivr cache for CSS
+        run: curl -X GET "https://purge.jsdelivr.net/gh/$GITHUB_REPOSITORY@dist/tooltip.min.css" -s
+
+      - name: Purge JSDelivr cache for JavaScript
+        run: curl -X GET "https://purge.jsdelivr.net/gh/$GITHUB_REPOSITORY@dist/tooltip.min.js" -s
