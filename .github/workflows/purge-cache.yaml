@@ -15,7 +15,7 @@ jobs:
 
     steps:
       - name: Purge JSDelivr cache for CSS
-        run: curl -X GET "https://purge.jsdelivr.net/gh/$GITHUB_REPOSITORY@dist/tooltip.min.css" -s
+        run: curl --fail --silent --show-error "https://purge.jsdelivr.net/gh/$GITHUB_REPOSITORY@dist/tooltip.min.css"
 
       - name: Purge JSDelivr cache for JavaScript
-        run: curl -X GET "https://purge.jsdelivr.net/gh/$GITHUB_REPOSITORY@dist/tooltip.min.js" -s
+        run: curl --fail --silent --show-error "https://purge.jsdelivr.net/gh/$GITHUB_REPOSITORY@dist/tooltip.min.js"

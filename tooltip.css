@@ -1,8 +1,14 @@
+/*!
+ * microtip is licensed under the MIT License.
+ * https://github.com/tanguylegazon/microtip/blob/main/LICENSE
+ */
+
 .ui-tooltip {
     --tooltip-background: Canvas;
     --tooltip-border-color: currentColor;
     --tooltip-color: CanvasText;
     --tooltip-arrow-size: 10px;
+    --tooltip-z-index: 80;
     --_tooltip-border: color-mix(in srgb, var(--tooltip-border-color) 12%, transparent);
     --_tooltip-offset: -4px;
     --_tooltip-origin: top center;
@@ -28,8 +34,9 @@
     opacity: 0;
     transform: translateY(var(--_tooltip-offset)) scale(var(--_tooltip-scale));
     transform-origin: var(--_tooltip-origin);
-    transition: opacity .15s ease, transform .15s ease;
-    z-index: 80;
+    transition: opacity 150ms cubic-bezier(.2, 0, .38, .9),
+                transform 150ms cubic-bezier(.2, 0, .38, .9);
+    z-index: var(--tooltip-z-index);
 }
 
 .ui-tooltip::before {
@@ -39,6 +46,7 @@
     top: 0;
     width: var(--tooltip-arrow-size);
     height: var(--tooltip-arrow-size);
+    box-sizing: border-box;
     border-left: 1px solid var(--_tooltip-border);
     border-top: 1px solid var(--_tooltip-border);
     background: var(--tooltip-background);
@@ -61,6 +69,7 @@
 }
 
 .ui-tooltip[data-visible="true"] {
+    pointer-events: auto;
     opacity: 1;
     transform: translateY(0) scale(1);
 }
@@ -68,4 +77,17 @@
 .ui-tooltip[hidden] {
     display: block;
     visibility: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ui-tooltip {
+        transition: none;
+    }
+}
+
+@media (forced-colors: active) {
+    .ui-tooltip {
+        border-color: CanvasText;
+        box-shadow: none;
+    }
 }

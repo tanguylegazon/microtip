@@ -26,12 +26,12 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: 'latest'
+          node-version: '24'
 
       - name: Build distribution files
         run: |
-          npx csso-cli -i "tooltip.css" -o "tooltip.min.css" --comments first-exclamation
-          npx terser "tooltip.js" -o "tooltip.min.js" -c -m
+          npx --yes csso-cli@4.0.2 -i "tooltip.css" -o "tooltip.min.css" --comments first-exclamation
+          npx --yes terser@5.51.2 "tooltip.js" -o "tooltip.min.js" -c -m --comments
 
       - name: Push to distribution branch
         run: |
