@@ -10,9 +10,9 @@ It is designed to be integrated with local files and used with a minimal HTML co
 ## Features
 
 - Single global tooltip element created at runtime
-- Passive tooltips for hover-capable pointers
-- Passive tooltips available from the keyboard
-- Active toggle tooltips for intentional user interaction, including touch devices
+- Tooltips on hover-capable pointers
+- Tooltips available from the keyboard
+- Tap-to-toggle tooltips on touch devices
 - Support for tooltip targets added after initialization
 - Automatic viewport-aware positioning with directional arrow support
 - No dependency on a framework, build step, or external runtime
@@ -37,29 +37,19 @@ Replace `dist` with a commit hash when the integration must remain immutable.
 
 ## Usage
 
-Passive tooltip:
+Tooltip:
 
 ```html
 <button class="tooltip" data-tooltip="Saved locally">Save</button>
 ```
 
-Passive tooltips open on hover and keyboard focus. When `data-tooltip` is used,
+Tooltips open on hover, keyboard focus, or tap on a touch device. A second tap or
+a tap outside closes a touch tooltip. When `data-tooltip` is used,
 the tooltip is linked to its target with `aria-describedby` while visible.
 Keep tooltip text concise and supplementary; the target must retain an accessible
 name of its own. Use a focusable target when the content must be available to
 keyboard users.
-
-Active tooltip (on click):
-
-```html
-<button type="button" class="tooltip" data-tooltip="Tooltip content"
-        data-tooltip-trigger="toggle" aria-expanded="false">
-    More information
-</button>
-```
-
-Active tooltips are useful when the same information must be available on touch
-devices. Tooltip content is plain text and must not contain interactive elements.
+Tooltip content is plain text and must not contain interactive elements.
 
 Targets added after initialization are supported.
 
@@ -81,8 +71,9 @@ Override the public custom properties on `.ui-tooltip`:
 
 - Modern browsers with support for `closest`, `matchMedia`, optional chaining, and `color-mix()`
 - Hover tooltips are limited to devices with a fine pointer and hover capability
-- Hover tooltips remain visible while the pointer moves between the target and bubble
-- Toggle tooltips work on both pointer and touch interactions
+- Hover tooltips disappear when the pointer leaves the target
+- Touch tooltips open on tap and close on a second tap or outside interaction
+- Tooltips close when the document loses visibility or the window loses focus
 - Reduced-motion and forced-colors preferences are respected
 
 ## License

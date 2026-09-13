@@ -43,7 +43,7 @@
     content: "";
     position: absolute;
     left: var(--_tooltip-arrow-left, 50%);
-    top: 0;
+    top: -.5px;
     width: var(--tooltip-arrow-size);
     height: var(--tooltip-arrow-size);
     box-sizing: border-box;
@@ -60,7 +60,7 @@
 
 .ui-tooltip[data-side="top"]::before {
     top: auto;
-    bottom: 0;
+    bottom: -.5px;
     border-left: 0;
     border-top: 0;
     border-right: 1px solid var(--_tooltip-border);
@@ -69,7 +69,6 @@
 }
 
 .ui-tooltip[data-visible="true"] {
-    pointer-events: auto;
     opacity: 1;
     transform: translateY(0) scale(1);
 }

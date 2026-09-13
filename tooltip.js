@@ -16,7 +16,6 @@
         const data = bubble.dataset;
         const clamp = (v, min, max) => v < min ? min : v > max ? max : v;
         const text = (e) => (e?.dataset.tooltip || e?.getAttribute("aria-label") || "").trim();
-        const toggle = (e) => e?.dataset.tooltipTrigger === "toggle";
         const pick = (e) => e.target.closest?.(".tooltip");
         const delay = 500;
         const leaveDelay = 100;
@@ -34,7 +33,6 @@
         bubble.setAttribute("aria-hidden", "true");
         document.body.appendChild(bubble);
 
-        const sync = (v) => toggle(active) && active.setAttribute("aria-expanded", v ? "true" : "false");
         const describe = (element) => {
             if (!element.dataset.tooltip) return;
             const ids = (element.getAttribute("aria-describedby") || "").split(/\s+/).filter(Boolean);
@@ -89,7 +87,6 @@
             clearTimeout(showTimer);
             clearTimeout(hideTimer);
             if (active !== element) {
-                sync(0);
                 undescribe();
                 active = element;
                 describe(element);
@@ -98,7 +95,6 @@
             bubble.textContent = value;
             bubble.hidden = false;
             bubble.setAttribute("aria-hidden", "false");
-            toggle(element) && element.setAttribute("aria-expanded", "true");
             place();
             requestAnimationFrame(() => active === element && (data.visible = "true"));
         };
@@ -108,7 +104,6 @@
             clearTimeout(hideTimer);
             frame && cancelAnimationFrame(frame);
             frame = 0;
-            sync(0);
             undescribe();
             active = null;
             mode = 0;
@@ -126,7 +121,7 @@
         if (hover) {
             document.addEventListener("mouseover", (event) => {
                 const element = pick(event);
-                if (!element || toggle(element)) return;
+                if (!element) return;
                 clearTimeout(hideTimer);
                 if (mode || element.contains(event.relatedTarget) || (element === active && !bubble.hidden)) return;
                 clearTimeout(showTimer);
@@ -135,33 +130,38 @@
 
             document.addEventListener("mouseout", (event) => {
                 const element = pick(event);
-                if (!element || toggle(element) || mode || element.contains(event.relatedTarget)) return;
+                if (!element || mode || element.contains(event.relatedTarget)) return;
                 queueHide();
             });
 
-            bubble.addEventListener("mouseenter", () => clearTimeout(hideTimer));
-            bubble.addEventListener("mouseleave", queueHide);
         }
 
         document.addEventListener("focusin", (event) => {
             const element = pick(event);
-            if (element && !toggle(element)) show(element, 2);
+            if (!element) return;
+            requestAnimationFrame(() => {
+                const focused = document.activeElement;
+                element.contains(focused) && focused.matches(":focus-visible") && show(element, 2);
+            });
         });
 
         document.addEventListener("focusout", (event) => {
             const element = pick(event);
-            if (element && !toggle(element) && !element.contains(event.relatedTarget)) hide();
+            if (element === active && mode === 2 && !element.contains(event.relatedTarget)) hide();
         });
 
-        document.addEventListener("click", (event) => {
-            const element = event.target.closest?.('.tooltip[data-tooltip-trigger="toggle"]');
-            if (!element) return mode && hide();
-            element === active && mode && !bubble.hidden ? hide() : show(element, 1);
+        document.addEventListener("pointerup", (event) => {
+            if (event.pointerType === "mouse") return;
+            const element = pick(event);
+            if (!element) return mode === 1 && hide();
+            element === active && mode === 1 && !bubble.hidden ? hide() : show(element, 1);
         });
 
         document.addEventListener("keydown", (event) => event.key === "Escape" && active && hide());
+        document.addEventListener("visibilitychange", () => document.hidden && hide());
         document.addEventListener("scroll", queue, { passive: true, capture: true });
         addEventListener("resize", queue);
+        addEventListener("blur", hide);
     };
 
     document.readyState === "loading"
